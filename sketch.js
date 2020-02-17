@@ -2,6 +2,8 @@
 const canvasSketch = require("canvas-sketch");
 //lerp is a func for linear interpalation between min and max using the t parameter.
 const { lerp } = require("canvas-sketch-util/math");
+//random is a super powered math.random
+const random = require("canvas-sketch-util/random");
 
 // define parameters for artwork (size, export settings, etc.)
 const settings = {
@@ -16,7 +18,7 @@ const sketch = () => {
 	// create local state
 	const createGrid = () => {
 		const points = [];
-		const count = 5;
+		const count = 40;
 		for (let x = 0; x < count; x++) {
 			for (let y = 0; y < count; y++) {
 				//divides grid between 0 and 1
@@ -28,12 +30,14 @@ const sketch = () => {
 		return points;
 	};
 
-	const points = createGrid();
+	// sets deterministic seed so that the random number string stays the same and the image doesn't change on reload
+	random.setSeed(512);
+	const points = createGrid().filter(() => random.value() > 0.5);
 
-	const margin = 400;
+	const margin = 200;
 
 	return ({ context, width, height }) => {
-		context.fillStyle = "white";
+		context.fillStyle = "pink";
 		context.fillRect(0, 0, width, height);
 
 		points.forEach(([u, v]) => {
@@ -42,9 +46,9 @@ const sketch = () => {
 
 			//draw a circle
 			context.beginPath();
-			context.arc(x, y, 150, Math.PI * 2, false);
-			context.strokeStyle = "black";
-			context.lineWidth = "25";
+			context.arc(x, y, 10, Math.PI * 2, false);
+			context.strokeStyle = "white";
+			context.lineWidth = "10";
 			context.stroke();
 		});
 	};
